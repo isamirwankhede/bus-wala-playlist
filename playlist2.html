@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2000s Bus Wala | Nostalgia Express</title>
+    <link href="https://fonts.googleapis.com/css2?family=Bungee+Shade&family=Poppins:wght@300;400;700&family=Kalam:wght@700&family=Monoton&family=Orbitron&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bus-red: #d32f2f;
+            --chrome-gold: #ffd700;
+            --neon-blue: #00f2ff;
+            --glass: rgba(0, 0, 0, 0.8);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; }
+
+        body {
+            background: #000;
+            color: white;
+            font-family: 'Poppins', sans-serif;
+            overflow: hidden;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Moving Highway Background */
+        .highway {
+            position: fixed;
+            inset: 0;
+            background: linear-gradient(to bottom, #000428, #000);
+            z-index: -1;
+        }
+
+        .road {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 50%;
+            background: #111;
+            transform: perspective(500px) rotateX(60deg);
+            overflow: hidden;
+        }
+
+        .road::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 50%;
+            width: 15px; height: 200%;
+            background: repeating-linear-gradient(to bottom, transparent, transparent 80px, #fff 80px, #fff 160px);
+            animation: drive 0.8s linear infinite;
+        }
+
+        @keyframes drive { from { transform: translateY(-160px); } to { transform: translateY(0); } }
+
+        /* Bus Structure */
+        .bus-frame {
+            position: relative;
+            width: 90%;
+            max-width: 950px;
+            height: 65vh;
+            border: 12px solid #222;
+            border-bottom: 0;
+            border-radius: 60px 60px 10px 10px;
+            background: rgba(0,0,0,0.4);
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 0 100px rgba(0,0,0,1);
+            border-top: 20px solid var(--bus-red);
+            overflow: hidden;
+        }
+
+        .tassels {
+            position: absolute;
+            top: 0; width: 100%;
+            height: 35px;
+            background: repeating-linear-gradient(90deg, #ff0 0, #ff0 20px, #000 20px, #000 40px);
+            opacity: 0.7;
+            z-index: 10;
+        }
+
+        .sticker {
+            font-family: 'Kalam', cursive;
+            background: #fff;
+            color: #000;
+            padding: 5px 12px;
+            position: absolute;
+            font-size: 0.75rem;
+            box-shadow: 4px 4px 0 var(--bus-red);
+            z-index: 11;
+        }
+        .s-left { top: 60px; left: 40px; transform: rotate(-10deg); }
+        .s-right { top: 60px; right: 40px; transform: rotate(10deg); }
+
+        .windshield {
+            flex: 2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            border-bottom: 5px solid #333;
+        }
+
+        .title {
+            font-family: 'Monoton', cursive;
+            font-size: clamp(2rem, 8vw, 4.5rem);
+            color: var(--chrome-gold);
+            text-shadow: 0 0 20px #ff0000;
+            text-align: center;
+            letter-spacing: 5px;
+        }
+
+        .dashboard {
+            flex: 1;
+            background: #151515;
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            padding: 20px;
+        }
+
+        .horn-btn {
+            width: 100px; height: 100px;
+            background: radial-gradient(circle, #ff4444, #8b0000);
+            border: 6px solid #222;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 8px 0 #400;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.6rem;
+            transition: 0.1s;
+        }
+        .horn-btn:active { transform: translateY(6px); box-shadow: 0 2px 0 #400; }
+
+        /* Music Player */
+        .player-card {
+            position: fixed;
+            bottom: 30px;
+            width: 90%;
+            max-width: 500px;
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 25px;
+            padding: 20px;
+            z-index: 100;
+        }
+
+        .track-display {
+            background: #000;
+            padding: 10px;
+            border: 2px solid #333;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            overflow: hidden;
+            text-align: center;
+        }
+
+        .track-name {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--neon-blue);
+            font-size: 0.8rem;
+            white-space: nowrap;
+            display: inline-block;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 30px;
+        }
+
+        .btn {
+            background: none; border: none;
+            color: white; cursor: pointer;
+            font-size: 1.5rem; transition: 0.2s;
+        }
+        .btn:hover { color: var(--chrome-gold); transform: scale(1.1); }
+        .play-btn { font-size: 3rem; }
+
+        /* Overlay */
+        .overlay {
+            position: fixed;
+            inset: 0;
+            background: #000;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .start-btn {
+            background: var(--bus-red);
+            color: white;
+            padding: 20px 50px;
+            border: none;
+            border-radius: 50px;
+            font-family: 'Bungee Shade';
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        #yt-player { position: absolute; visibility: hidden; pointer-events: none; }
+
+    </style>
+</head>
+<body>
+
+    <div class="overlay" id="intro">
+        <h1 style="font-family: 'Kalam'; margin-bottom: 20px;">Ustad, Safar Shuru Karein?</h1>
+        <button class="start-btn" onclick="startJourney()">START JOURNEY 🚌</button>
+    </div>
+
+    <div class="highway">
+        <div class="road"></div>
+    </div>
+
+    <div class="bus-frame" id="bus">
+        <div class="tassels"></div>
+        <div class="sticker s-left">BOORI NAZAR WALE TERA MUH KALA</div>
+        <div class="sticker s-right">HORN OK PLEASE</div>
+
+        <div class="windshield">
+            <h1 class="title">USTAD TRAVELS</h1>
+            <p id="quote" style="font-family: 'Kalam'; font-size: 1.1rem; color: #aaa; margin-top: 15px;">"Chalo chalo, aage badho!"</p>
+        </div>
+
+        <div class="dashboard">
+            <div class="horn-btn" onclick="pressHorn()">
+                <span style="font-size: 1.8rem;">📯</span>
+                <span>AIR HORN</span>
+            </div>
+        </div>
+    </div>
+
+    <div id="yt-player"></div>
+
+    <div class="player-card">
+        <div class="track-display">
+            <div class="track-name" id="track-title">Loading 2000s Hits...</div>
+        </div>
+        <div class="controls">
+            <button class="btn" onclick="prev()">⏮</button>
+            <button class="btn play-btn" id="playIcon" onclick="toggle()">⏵</button>
+            <button class="btn" onclick="next()">⏭</button>
+        </div>
+    </div>
+
+    <script>
+        const PLAYLIST_ID = 'PLl2jQn4j1xPhjPgjze0Ks19_z7gT7Eq1l';
+        let player;
+        let isPlayerReady = false;
+
+        // Load YouTube API
+        const tag = document.createElement('script');
+        tag.src = "https://www.youtube.com/iframe_api";
+        document.head.appendChild(tag);
+
+        function onYouTubeIframeAPIReady() {
+            player = new YT.Player('yt-player', {
+                height: '0', width: '0',
+                playerVars: {
+                    listType: 'playlist',
+                    list: PLAYLIST_ID,
+                },
+                events: {
+                    'onReady': onPlayerReady,
+                    'onStateChange': onPlayerStateChange
+                }
+            });
+        }
+
+        function onPlayerReady(event) {
+            isPlayerReady = true;
+            console.log("YouTube Player is ready");
+        }
+
+        function onPlayerStateChange(event) {
+            if (event.data == YT.PlayerState.PLAYING) {
+                document.getElementById('playIcon').innerText = '⏸';
+                const videoData = player.getVideoData();
+                document.getElementById('track-title').innerText = videoData.title;
+            } else {
+                document.getElementById('playIcon').innerText = '⏵';
+            }
+        }
+
+        function startJourney() {
+            document.getElementById('intro').style.display = 'none';
+            if(isPlayerReady) {
+                player.playVideo();
+            }
+        }
+
+        // --- FIXED CONTROL FUNCTIONS WITH SAFETY CHECKS ---
+        function toggle() {
+            if (!isPlayerReady || !player) return;
+            const state = player.getPlayerState();
+            if (state === YT.PlayerState.PLAYING) {
+                player.pauseVideo();
+            } else {
+                player.playVideo();
+            }
+        }
+
+        function next() {
+            if (isPlayerReady && player && typeof player.nextVideo === 'function') {
+                player.nextVideo();
+            } else {
+                console.log("Player not ready for 'Next'");
+            }
+        }
+
+        function prev() {
+            if (isPlayerReady && player && typeof player.previousVideo === 'function') {
+                player.previousVideo();
+            } else {
+                console.log("Player not ready for 'Prev'");
+            }
+        }
+
+        // --- HORN & QUOTES ---
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        function pressHorn() {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(400, audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(150, audioCtx.currentTime + 0.6);
+            gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.6);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.6);
+        }
+
+        const quotes = ["Wait for side", "Use dipper at night", "Buri nazar wale tera muh kala", "Has mat pagli pyaar ho jayega"];
+        setInterval(() => {
+            document.getElementById('quote').innerText = quotes[Math.floor(Math.random()*quotes.length)];
+        }, 5000);
+
+    </script>
+</body>
+</html>
